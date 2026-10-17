@@ -1,15 +1,15 @@
 """분석 결과 CSV로 보고서용 최종 표(Q1, Q2)를 만든다.
 
-사용법: python3 src/make_tables.py   (먼저 analyze_weekly.py, analyze_by_band.py 실행)
+사용법: python3 src/make_tables.py   (먼저 analyze_weekly.py, analyze_by_band.py 실행. W1은 앞에 PERIOD=w1)
 출력: outputs/report/final_tables.md (집계 수치만)
 """
 import csv
 
-from analyze_weekly import WEEKS
+from analyze_weekly import CFG, SUFFIX, WEEKS
 from test_api import ROOT
 
 PROC = ROOT / "data" / "processed"
-OUT = ROOT / "outputs" / "report" / "final_tables.md"
+OUT = ROOT / "outputs" / "report" / f"final_tables{SUFFIX}.md"
 SLOT_KO = {"fixed": "고정", "favored": "선호", "etc": "기타"}
 BANDS = ["피크", "오후", "비피크"]
 
@@ -21,7 +21,7 @@ def ranks(rows, key):
 
 
 def q1_section(lines):
-    rows = list(csv.DictReader(open(PROC / "weekly_map_share.csv", encoding="utf-8")))
+    rows = list(csv.DictReader(open(PROC / f"weekly_map_share{SUFFIX}.csv", encoding="utf-8")))
     lines += ["## Q1. 주차별 공식 선호도(참고) vs 사람 기준 비중",
               "> 기준: **전체 모드, 전체 시간대**, 사람 0명 매치 제외. 순위는 그 주 로테이션 5개 맵 안에서의 순위.",
               "> 공식 선호도는 측정 기간(8/3 ~ 9/28)이 달라 정답이 아닌 참고 기준.", ""]
@@ -51,7 +51,7 @@ def q1_section(lines):
 
 
 def q2_section(lines):
-    rows = [r for r in csv.DictReader(open(PROC / "weekly_map_by_band.csv", encoding="utf-8"))
+    rows = [r for r in csv.DictReader(open(PROC / f"weekly_map_by_band{SUFFIX}.csv", encoding="utf-8"))
             if r["group"] == "squad"]
     lines += ["## Q2·제안. 시간대별 봇 비율과 정원 대비 사람 비율",
               "> 기준: **스쿼드만(1인칭 포함)**, 사람 0명 매치 제외. 시간대는 한국 시간 피크 20~01시, 오후 14~19시, 비피크 02~13시.",
@@ -71,12 +71,13 @@ def q2_section(lines):
             fill = [f"{cell[b]['human_fill']}%" for b in BANDS]
             lines.append(f"| {m['map_ko']} | {SLOT_KO[m['slot']]} | " + " | ".join(bot + fill) + " |")
         lines.append("")
-    lines += ["표본 주의: 비피크 칸은 맵당 14~198건. 30건 미만 칸은 몇 판에 따라 크게 바뀌므로 경향 수준으로만 해석.", ""]
+    off = [int(r["matches"]) for r in rows if r["band"] == "비피크"]
+    lines += [f"표본 주의: 비피크 칸은 맵당 {min(off)}~{max(off)}건. 30건 미만 칸은 몇 판에 따라 크게 바뀌므로 경향 수준으로만 해석.", ""]
 
 
 def main():
     lines = ["# 최종 표 (자동 생성: src/make_tables.py)", "",
-             "분석 대상: 스팀 아시아(as) 일반 매치, 43.1 W4·W5 (10/2 08:35 ~ 10/14 11:00 KST), 사람 0명 매치 제외", ""]
+             f"분석 대상: 스팀 아시아(as) 일반 매치, {CFG['label']}, 사람 0명 매치 제외", ""]
     q1_section(lines)
     q2_section(lines)
     OUT.parent.mkdir(parents=True, exist_ok=True)

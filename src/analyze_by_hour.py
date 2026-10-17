@@ -7,11 +7,11 @@ import csv
 from collections import defaultdict
 from datetime import datetime, timedelta
 
-from analyze_weekly import load_matches
+from analyze_weekly import SUFFIX, load_matches
 from test_api import ROOT
 
 MODES = ["solo", "duo", "squad"]
-OUT = ROOT / "data" / "processed" / "hourly_kst.csv"
+OUT = ROOT / "data" / "processed" / f"hourly_kst{SUFFIX}.csv"
 
 
 def kst_hour(created_at):

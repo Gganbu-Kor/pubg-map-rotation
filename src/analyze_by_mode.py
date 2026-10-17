@@ -6,11 +6,11 @@
 import csv
 from collections import Counter, defaultdict
 
-from analyze_weekly import API_TO_EN, MAX_PLAYERS, WEEKS, add_match, load_matches, median_min, new_stats
+from analyze_weekly import API_TO_EN, MAX_PLAYERS, SUFFIX, WEEKS, add_match, load_matches, median_min, new_stats
 from test_api import ROOT
 
 MODES = ["solo", "duo", "squad"]  # 1인칭(-fpp)과 3인칭은 합침
-OUT = ROOT / "data" / "processed" / "weekly_map_share_by_mode.csv"
+OUT = ROOT / "data" / "processed" / f"weekly_map_share_by_mode{SUFFIX}.csv"
 
 
 def main():

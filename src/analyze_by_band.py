@@ -7,13 +7,13 @@ import csv
 from collections import defaultdict
 
 from analyze_by_hour import kst_hour
-from analyze_weekly import API_TO_EN, MAX_PLAYERS, WEEKS, add_match, load_matches, median_min, new_stats
+from analyze_weekly import API_TO_EN, MAX_PLAYERS, SUFFIX, WEEKS, add_match, load_matches, median_min, new_stats
 from test_api import ROOT
 
 # 시간대 구간 (한국 시간, 시작 시 포함)
 BANDS = {"피크": [20, 21, 22, 23, 0, 1], "오후": list(range(14, 20)), "비피크": list(range(2, 14))}
 HOUR_TO_BAND = {h: b for b, hours in BANDS.items() for h in hours}
-OUT = ROOT / "data" / "processed" / "weekly_map_by_band.csv"
+OUT = ROOT / "data" / "processed" / f"weekly_map_by_band{SUFFIX}.csv"
 
 
 def main():

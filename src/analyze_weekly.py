@@ -1,18 +1,30 @@
 """주차별로 열린 5개 맵의 매치 비중, 사람 비중, 한 판 사람 수를 계산한다.
 
-사용법: python3 src/analyze_weekly.py
+사용법: python3 src/analyze_weekly.py              (본 분석: 43.1 W4·W5)
+        PERIOD=w1 python3 src/analyze_weekly.py    (재현 확인: 43.2 W1, 결과 파일에 _w1이 붙음)
 입력: data/raw/collect_steam.jsonl, data/processed/rotation_as_pc.csv
-출력: data/processed/weekly_map_share.csv (집계 수치만)
+출력: data/processed/weekly_map_share{_w1}.csv (집계 수치만)
 """
 import csv
 import json
+import os
 from collections import defaultdict
 from statistics import median
 
 from test_api import ROOT
 
-CUTOFF = "2026-10-14T02:00:00Z"  # 43.2 로테이션 교체(11:00 KST) 이전만 분석
-WEEKS = ["43.1 W4", "43.1 W5"]
+# 분석 기간 설정 (UTC). 로테이션은 수요일 02:00 UTC(11:00 KST)에 바뀐다
+PERIODS = {
+    "main": {"label": "43.1 W4·W5 (10/2 08:35 ~ 10/14 11:00 KST)", "weeks": ["43.1 W4", "43.1 W5"],
+             "start": "2026-09-30T02:00:00Z", "end": "2026-10-14T02:00:00Z", "suffix": ""},
+    "w1": {"label": "43.2 W1 (10/14 11:00 ~ 10/21 11:00 KST)", "weeks": ["43.2 W1"],
+           "start": "2026-10-14T02:00:00Z", "end": "2026-10-21T02:00:00Z", "suffix": "_w1"},
+}
+PERIOD = os.environ.get("PERIOD", "main")
+if PERIOD not in PERIODS:
+    raise SystemExit(f"PERIOD는 {list(PERIODS)} 중 하나여야 합니다: {PERIOD}")
+CFG = PERIODS[PERIOD]
+WEEKS, SUFFIX = CFG["weeks"], CFG["suffix"]
 API_TO_EN = {
     "Baltic_Main": "Erangel", "Tiger_Main": "Taego", "Desert_Main": "Miramar",
     "Savage_Main": "Sanhok", "DihorOtok_Main": "Vikendi", "Chimera_Main": "Paramo",
@@ -23,7 +35,7 @@ PREF_43_2 = {"Taego": 34.7, "Erangel": 20.1, "Sanhok": 10.2, "Miramar": 9.9, "Vi
              "Rondo": 5.1, "Paramo": 4.6, "Karakin": 4.4, "Deston": 4.3}
 # 맵별 최대 인원 (카라킨·파라모는 64명, 나머지는 100명 — 사용자 확인)
 MAX_PLAYERS = {"Karakin": 64, "Paramo": 64}
-OUT = ROOT / "data" / "processed" / "weekly_map_share.csv"
+OUT = ROOT / "data" / "processed" / f"weekly_map_share{SUFFIX}.csv"
 
 
 def is_excluded(r):
@@ -33,7 +45,8 @@ def is_excluded(r):
 
 
 def load_matches(verbose=False):
-    """같은 매치가 여러 줄이면 마지막 줄을 쓰고, 분석 대상만 남긴다. 사람 생존 시간(합·최대)을 붙인다."""
+    """같은 매치가 여러 줄이면 마지막 줄을 쓰고, 분석 기간의 대상만 남긴다. 사람 생존 시간(합·최대)을 붙인다.
+    생존 시간은 수집 파일에 있으면 그 값을, 없으면(10/16 이전 수집분) survival_steam.jsonl 값을 쓴다."""
     recs = {}
     for line in open(ROOT / "data" / "raw" / "collect_steam.jsonl", encoding="utf-8"):
         r = json.loads(line)
@@ -46,16 +59,17 @@ def load_matches(verbose=False):
 
     base = [r for r in recs.values()
             if "error" not in r and r["match_type"] == "official" and not r["custom"]
-            and r["region"] == "as" and r["created_at"] < CUTOFF]
-    missing = [r for r in base if r["match_id"] not in survival]
+            and r["region"] == "as" and CFG["start"] <= r["created_at"] < CFG["end"]]
+    for r in base:
+        if "human_max_survived_sec" not in r and r["match_id"] in survival:
+            r["human_survived_sec"] = survival[r["match_id"]]["human_survived_sec"]
+            r["human_max_survived_sec"] = survival[r["match_id"]]["human_max_survived_sec"]
+    missing = [r for r in base if "human_max_survived_sec" not in r]
     if missing:
         raise SystemExit(f"생존 시간이 없는 매치 {len(missing)}건 → python3 src/add_survival.py 를 먼저 실행")
-    for r in base:
-        r["human_survived_sec"] = survival[r["match_id"]]["human_survived_sec"]
-        r["human_max_survived_sec"] = survival[r["match_id"]]["human_max_survived_sec"]
     kept = [r for r in base if not is_excluded(r)]
     if verbose:
-        print(f"분석 대상 {len(base):,}건 중 사람 0명 매치 {len(base) - len(kept):,}건 제외 → {len(kept):,}건")
+        print(f"[{CFG['label']}] 분석 대상 {len(base):,}건 중 사람 0명 매치 {len(base) - len(kept):,}건 제외 → {len(kept):,}건")
     return kept
 
 

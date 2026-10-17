@@ -77,7 +77,7 @@ def q1_chart():
         style_axis(ax)
     handles, labels = axes[0].get_legend_handles_labels()
     fig.legend(handles, labels, loc="lower center", ncol=3, frameon=False, fontsize=9, bbox_to_anchor=(0.5, -0.02))
-    fig.suptitle("직전 공식 선호도(43.2)와 실제 사람 플레이 비중은 거의 같았다", x=0.01, ha="left",
+    fig.suptitle("직전 공식 선호도(43.2)와 실제 사람 플레이 비중은 크게 다르지 않았다", x=0.01, ha="left",
                  fontsize=14, fontweight="bold", color=INK)
     fig.text(0.01, 0.885, "스팀 아시아 일반 매치, 전체 모드 · 공식 선호도는 측정 기간(8/3~9/28)이 달라 참고 기준 · "
              "오른쪽 숫자 = 공식 / 사람 / 사람×시간", fontsize=9, color=INK2)
