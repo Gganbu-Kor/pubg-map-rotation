@@ -35,6 +35,7 @@ code { font-size: 9pt; background: #f3f3f1; padding: 0 3pt; border-radius: 3px; 
 hr { border: 0; border-top: 1px solid #e1e0d9; margin: 14pt 0; }
 table, img, blockquote { break-inside: avoid; }
 h2, h3 { break-after: avoid; }
+h2 + ol > li:first-child, h2 + ul > li:first-child { break-inside: avoid; }  /* 제목 바로 뒤 첫 항목을 통째로 옮겨 제목이 혼자 남지 않게 */
 p:has(+ table), p:has(+ ul), p:has(+ ol) { break-after: avoid; }  /* 표·목록 앞의 굵은 제목 줄이 혼자 쪽 끝에 남지 않게 */
 li { margin: 1pt 0; }
 """
