@@ -172,7 +172,7 @@ W4·W5로 결론을 낸 뒤, 분석 코드는 그대로 두고 기간만 다음 
 | 피크 스쿼드 맵 간 봇 비율 범위 | 12.3~20.0% | 15.2~19.4% | ✓ |
 | 기타 자리 맵 매칭 품질 = 선호 자리 맵 | 범위 겹침 | 피크·스쿼드만 ✓, 전체 모드는 론도가 사녹보다 낮음 | △ |
 
-W1은 전체적으로 봇이 더 많았다(전체 모드 태이고 정원 대비 사람 W5 77.2% → W1 70.4%). 원인은 이 데이터로 알 수 없다. 자세한 비교: [w1_replication.md](w1_replication.md)
+W1은 전체적으로 봇이 더 많았다(전체 모드 태이고 정원 대비 사람 W5 77.2% → W1 70.4%). 원인은 이 데이터로 알 수 없다. 자세한 비교: [w1_replication.md](https://github.com/Gganbu-Kor/pubg-map-rotation/blob/main/outputs/report/w1_replication.md)
 
 ---
 
@@ -299,8 +299,9 @@ W1은 전체적으로 봇이 더 많았다(전체 모드 태이고 정원 대비
 
 ## 부록
 
-- 전체 표: [final_tables.md](final_tables.md), W1: [final_tables_w1.md](final_tables_w1.md)
-- W1 재현 비교: [w1_replication.md](w1_replication.md)
-- 문제 정의 변천과 결정 이유: [docs/03_의사결정기록.md](../../docs/03_의사결정기록.md)
-- AI가 틀렸던 사례와 바로잡은 과정: [docs/02_AI협업로그.md](../../docs/02_AI협업로그.md)
-- 재현 방법: README의 "실행 방법"
+- 전체 코드·집계 데이터: [github.com/Gganbu-Kor/pubg-map-rotation](https://github.com/Gganbu-Kor/pubg-map-rotation)
+- 전체 표: [final_tables.md](https://github.com/Gganbu-Kor/pubg-map-rotation/blob/main/outputs/report/final_tables.md), W1: [final_tables_w1.md](https://github.com/Gganbu-Kor/pubg-map-rotation/blob/main/outputs/report/final_tables_w1.md)
+- W1 재현 비교: [w1_replication.md](https://github.com/Gganbu-Kor/pubg-map-rotation/blob/main/outputs/report/w1_replication.md)
+- 문제 정의 변천과 결정 이유: [docs/03_의사결정기록.md](https://github.com/Gganbu-Kor/pubg-map-rotation/blob/main/docs/03_의사결정기록.md)
+- AI가 틀렸던 사례와 바로잡은 과정: [docs/02_AI협업로그.md](https://github.com/Gganbu-Kor/pubg-map-rotation/blob/main/docs/02_AI협업로그.md)
+- 재현 방법: [README의 "실행 방법"](https://github.com/Gganbu-Kor/pubg-map-rotation#실행-방법)
